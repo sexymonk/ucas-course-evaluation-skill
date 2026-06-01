@@ -1,4 +1,4 @@
 interface:
   display_name: "国科大课程评价"
-  short_description: "全自动国科大课程和教师评价流程，含中文主观题与保存"
-  default_prompt: "Use $ucas-course-evaluation to fully automate UCAS course and teacher evaluations in Chrome with highest objective ratings, Chinese subjective answers, automatic save/submit, and completion verification."
+  short_description: "全自动国科大评教，支持多种浏览器执行通道"
+  default_prompt: "Use $ucas-course-evaluation to fully automate UCAS course and teacher evaluations through an available logged-in controllable browser, using highest objective ratings, Chinese subjective answers, automatic save/submit, and completion verification."

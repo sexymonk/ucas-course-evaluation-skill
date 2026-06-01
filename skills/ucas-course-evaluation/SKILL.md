@@ -1,6 +1,6 @@
 ---
 name: ucas-course-evaluation
-description: Use when Codex should fully automate 中国科学院大学 or 国科大 course selection system course and teacher evaluations in a logged-in browser session, including discovering pending rows, selecting best objective ratings, filling Chinese subjective answers, saving/submitting forms, verifying completion, and stopping only on login, permission, captcha, or anti-automation blockers.
+description: Use when Codex should fully automate 中国科学院大学 or 国科大 course selection system course and teacher evaluations through an available logged-in controllable browser, including Chrome plugin control, Computer Use desktop automation, or a logged-in in-app Browser; covers discovering pending rows, selecting best objective ratings, filling Chinese subjective answers, saving/submitting forms, verifying completion, and stopping on missing browser-control capability, login, permission, captcha, or anti-automation blockers.
 ---
 
 # 国科大课程评价
@@ -16,10 +16,19 @@ Fully automate UCAS/国科大 course and teacher evaluation pages in the user's 
 - Do not inspect cookies, passwords, browser local storage, or unrelated tabs.
 - Do not save real evaluation page content, screenshots, captcha images, or submitted results into the skill repository.
 
+## Execution Modes
+
+Choose the execution channel before opening forms:
+
+1. Chrome plugin / Chrome-control: prefer this when the user has an already logged-in Chrome tab, because it can claim the existing tab and interact with form elements directly.
+2. Computer Use: use this as the desktop fallback when browser plugins are unavailable or broken but a logged-in browser window is visible. Operate by visual inspection, mouse, and keyboard, then verify state after each save.
+3. In-app Browser: use only if the UCAS login can be completed in that browser. Do not assume it shares the user's Chrome cookies or login state.
+4. No browser-control capability: the full automation task cannot be executed. Report the missing execution channel instead of claiming completion.
+
 ## Full-Automation Workflow
 
-1. Use the available browser or Chrome-control capability for authenticated pages because the session usually depends on the user's browser login.
-2. Claim the already-open evaluation tab when available. Do not guess tab IDs; choose by visible title, URL, and recency from the browser tool's tab list.
+1. Select an execution mode from the `Execution Modes` section and confirm a controllable logged-in evaluation page is available.
+2. Claim or focus the already-open evaluation tab when available. Do not guess tab IDs; choose by visible title, URL, and recency from the browser tool's tab list, or by visual confirmation in Computer Use.
 3. Read the course/teacher evaluation navigation and identify both evaluation entry points.
 4. For each entry point, read the table or page body and classify rows:
    - completed rows: saved/modified/completed action state
@@ -105,6 +114,7 @@ Stop the automation and report the blocker if any of these appear:
 - login expired or permission denied
 - captcha or other human-verification challenge
 - anti-automation interstitial
+- no Chrome plugin, Computer Use, in-app Browser, or equivalent browser-control tool is available
 - ambiguous duplicate target rows that cannot be safely distinguished
 - form validation failure with no discoverable missing field
 
