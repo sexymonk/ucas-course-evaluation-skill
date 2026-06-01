@@ -1,0 +1,4 @@
+interface:
+  display_name: "国科大课程评价"
+  short_description: "国科大课程评价浏览器流程助手，中文主观题与提交边界"
+  default_prompt: "Use $ucas-course-evaluation to help with a UCAS course or teacher evaluation in Chrome, using Chinese subjective answers and leaving captcha/final submit to me."
