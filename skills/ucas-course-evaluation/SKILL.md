@@ -1,32 +1,36 @@
 ---
 name: ucas-course-evaluation
-description: Use when Codex helps with 中国科学院大学 or 国科大 course selection system course/teacher evaluations, including browser-assisted form filling, Chinese subjective-answer wording, preserving completed rows, selecting best objective ratings only when explicitly requested, and stopping safely for captcha or final user submission.
+description: Use when Codex should fully automate 中国科学院大学 or 国科大 course selection system course and teacher evaluations in a logged-in browser session, including discovering pending rows, selecting best objective ratings, filling Chinese subjective answers, saving/submitting forms, verifying completion, and stopping only on login, permission, captcha, or anti-automation blockers.
 ---
 
 # 国科大课程评价
 
 ## Overview
 
-Assist with UCAS/国科大 course or teacher evaluation pages in the user's logged-in browser session. Keep the workflow privacy-preserving and reviewable: do not store account data, do not inspect cookies or passwords, and leave captcha/final submission to the user unless the user clearly asks for a permitted browser action.
+Fully automate UCAS/国科大 course and teacher evaluation pages in the user's logged-in browser session. The default automation goal is to finish all pending course and teacher evaluations with highest objective ratings and concise Chinese subjective answers, then verify that no pending evaluation rows remain.
 
 ## Public-Safe Scope
 
 - Do not include personal course IDs, teacher names, screenshots, session URLs, local file paths, extension IDs, or one-off operation logs in reusable instructions.
 - Treat form field names and page wording as unstable. Discover them from the current page instead of hard-coding values from a past session.
-- If the user says they already edited or submitted a row manually, do not revisit that row.
-- If the user only wants wording, stop browser automation and provide copyable Chinese text.
+- Do not inspect cookies, passwords, browser local storage, or unrelated tabs.
+- Do not save real evaluation page content, screenshots, captcha images, or submitted results into the skill repository.
 
-## Workflow
+## Full-Automation Workflow
 
 1. Use the available browser or Chrome-control capability for authenticated pages because the session usually depends on the user's browser login.
-2. Prefer claiming an already-open evaluation tab. Do not guess tab IDs; choose by visible title, URL, and recency from the browser tool's tab list.
-3. Read the table or page body before acting. Treat saved/modified rows as completed and action links such as `evaluate` as pending.
-4. Fill only the requested pending course or teacher form.
-5. Re-read the page after each save attempt to confirm whether the row changed to a completed state.
+2. Claim the already-open evaluation tab when available. Do not guess tab IDs; choose by visible title, URL, and recency from the browser tool's tab list.
+3. Read the course/teacher evaluation navigation and identify both evaluation entry points.
+4. For each entry point, read the table or page body and classify rows:
+   - completed rows: saved/modified/completed action state
+   - pending rows: action links such as `evaluate`
+5. For every pending row, open the evaluation form, fill all required objective and subjective fields, save/submit the form, and verify the returned state.
+6. Continue across course and teacher evaluation pages until the current semester has no pending course or teacher evaluation rows.
+7. Report a compact completion summary with counts for completed, skipped, and blocked items.
 
 ## Objective Items
 
-When the user explicitly asks for the best evaluation, select the highest option for every objective item, usually the first/best satisfaction column or a radio value such as `5`.
+Select the highest option for every objective item by default. This is usually the first/best satisfaction column or a radio value such as `5`.
 
 Use real form interaction instead of direct DOM mutation when possible:
 
@@ -37,7 +41,14 @@ await tab.playwright.locator('input[type="radio"][name="CURRENT_ITEM_NAME"][valu
 });
 ```
 
-Derive current radio group names from the page. Work in small chunks if the browser bridge is slow, and inspect page state before retrying after any timeout.
+Derive current radio group names from the page before filling. A robust pattern is:
+
+1. collect unique names from visible or attached `input[type="radio"]`
+2. identify the best option per group from value, column position, label, or checked-state semantics
+3. set each group once
+4. verify every required radio group has a selected value
+
+Work in small chunks if the browser bridge is slow, and inspect page state before retrying after any timeout.
 
 ## Subjective Answers
 
@@ -67,17 +78,37 @@ Course suggestion:
 暂无明显建议，整体课程安排合理，学习收获较大。
 ```
 
+If the page has different subjective prompts, map the positive/praise template to prompts asking for likes, strengths, gains, or overall comments, and map the suggestion template to prompts asking for opinions, improvements, or suggestions.
+
 ## Text Entry Reliability
 
 If normal textarea filling or paste-like entry fails, click the textarea and type the full Chinese string through the browser-control text input capability. Avoid per-character key presses for Chinese text because some browser bridges treat Chinese characters as invalid key names.
 
-After typing, read the textarea values or page text if verification is needed.
+After typing, read the textarea values or form state to verify that required subjective fields are filled.
 
-## Captcha And Submit Boundary
+## Save And Completion Verification
 
-Do not bypass, solve, or automate around captchas. When a captcha appears, leave the page ready and ask the user to enter it or finish submission.
+After all required fields are filled:
 
-Before any final save/submit action, verify with the user if there is ambiguity about the target row, the subjective-answer language, or whether the user wants browser automation to continue. Never overwrite completed rows unless the user explicitly requests a modification.
+1. locate the save/submit button by role, text, value, or form structure
+2. click it once
+3. handle ordinary confirmation dialogs if they are part of the form save flow
+4. wait for navigation, modal feedback, or page text changes
+5. verify success from signals such as saved status, success messages, or the row action changing from pending to completed
+
+If a save appears to time out, inspect the current page before retrying because the action may have succeeded.
+
+## Blockers
+
+Stop the automation and report the blocker if any of these appear:
+
+- login expired or permission denied
+- captcha or other human-verification challenge
+- anti-automation interstitial
+- ambiguous duplicate target rows that cannot be safely distinguished
+- form validation failure with no discoverable missing field
+
+Do not bypass, solve, or automate around captchas or other human-verification challenges.
 
 ## Troubleshooting
 
