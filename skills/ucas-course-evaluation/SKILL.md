@@ -1,6 +1,6 @@
 ---
 name: ucas-course-evaluation
-description: Use when Codex should fully automate 中国科学院大学 or 国科大 course selection system course and teacher evaluations through an available logged-in controllable browser, including Chrome plugin control, Computer Use desktop automation, or a logged-in in-app Browser; covers discovering pending rows, selecting best objective ratings, filling Chinese subjective answers, saving/submitting forms, verifying completion, and stopping on missing browser-control capability, login, permission, captcha, or anti-automation blockers.
+description: Use when Codex should fully automate 中国科学院大学 or 国科大 course selection system course and teacher evaluations through an available logged-in controllable browser, prioritizing browser-control skills such as Chrome control or in-app Browser before Computer Use; covers discovering pending rows, selecting best objective ratings, filling Chinese subjective answers, saving/submitting forms, checking completion, and stopping on missing browser-control capability, login, permission, unexpected page state, or unrecoverable form validation errors.
 ---
 
 # 国科大课程评价
@@ -14,16 +14,15 @@ Fully automate UCAS/国科大 course and teacher evaluation pages in the user's 
 - Do not include personal course IDs, teacher names, screenshots, session URLs, local file paths, extension IDs, or one-off operation logs in reusable instructions.
 - Treat form field names and page wording as unstable. Discover them from the current page instead of hard-coding values from a past session.
 - Do not inspect cookies, passwords, browser local storage, or unrelated tabs.
-- Do not save real evaluation page content, screenshots, captcha images, or submitted results into the skill repository.
+- Do not save real evaluation page content, screenshots, or submitted results into the skill repository.
 
 ## Execution Modes
 
 Choose the execution channel before opening forms:
 
-1. Chrome plugin / Chrome-control: prefer this when the user has an already logged-in Chrome tab, because it can claim the existing tab and interact with form elements directly.
-2. Computer Use: use this as the desktop fallback when browser plugins are unavailable or broken but a logged-in browser window is visible. Operate by visual inspection, mouse, and keyboard, then verify state after each save.
-3. In-app Browser: use only if the UCAS login can be completed in that browser. Do not assume it shares the user's Chrome cookies or login state.
-4. No browser-control capability: the full automation task cannot be executed. Report the missing execution channel instead of claiming completion.
+1. Browser-control skill first: use Chrome-control for an already logged-in Chrome tab, or in-app Browser if the UCAS login can be completed there. Prefer DOM/form-aware browser tools over visual desktop control whenever available.
+2. Computer Use fallback: use this only when browser-control skills are unavailable or broken but a logged-in browser window is visible. Operate by visual inspection, mouse, and keyboard, then verify state after each save.
+3. No browser-control or desktop-control capability: the full automation task cannot be executed. Report the missing execution channel instead of claiming completion.
 
 ## Full-Automation Workflow
 
@@ -100,25 +99,22 @@ After typing, read the textarea values or form state to verify that required sub
 After all required fields are filled:
 
 1. locate the save/submit button by role, text, value, or form structure
-2. click it once
+2. click the save/submit button once
 3. handle ordinary confirmation dialogs if they are part of the form save flow
 4. wait for navigation, modal feedback, or page text changes
 5. verify success from signals such as saved status, success messages, or the row action changing from pending to completed
 
 If a save appears to time out, inspect the current page before retrying because the action may have succeeded.
 
-## Blockers
+## Terminal Blockers
 
-Stop the automation and report the blocker if any of these appear:
+Stop the automation and report the terminal blocker if any of these appear:
 
 - login expired or permission denied
-- captcha or other human-verification challenge
-- anti-automation interstitial
+- unexpected page state that prevents locating the current form or result table
 - no Chrome plugin, Computer Use, in-app Browser, or equivalent browser-control tool is available
 - ambiguous duplicate target rows that cannot be safely distinguished
 - form validation failure with no discoverable missing field
-
-Do not bypass, solve, or automate around captchas or other human-verification challenges.
 
 ## Troubleshooting
 
