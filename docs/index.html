@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>国科大课程评价 Skill | I/O Interface</title>
+    <meta
+      name="description"
+      content="国科大课程评价 Codex skill 的 SIGGRAPH 风格 I/O 介绍页面。"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <canvas id="flow-field" aria-hidden="true"></canvas>
+
+    <header class="site-header" aria-label="页面导航">
+      <a class="brand" href="#top" aria-label="国科大课程评价 Skill">
+        <span class="brand-mark"></span>
+        <span>UCAS Evaluation Skill</span>
+      </a>
+      <nav aria-label="主要区域">
+        <a href="#io">I/O</a>
+        <a href="#pipeline">Pipeline</a>
+        <a href="#usage">Usage</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow">Codex Skill / Browser-first Automation</p>
+          <h1 id="hero-title">国科大课程评价</h1>
+          <p class="hero-lede">
+            将已登录的评教页面转换为可验证的自动化流水线：识别待评价项目，填写最高客观评价和中文主观题，保存并检查完成状态。
+          </p>
+          <div class="hero-actions">
+            <a class="primary-action" href="#usage">查看使用方式</a>
+            <a class="secondary-action" href="../skills/ucas-course-evaluation/SKILL.md">打开 SKILL.md</a>
+          </div>
+        </div>
+
+        <div class="signal-panel" aria-label="自动化状态摘要">
+          <div class="panel-topline">
+            <span>IO Graph</span>
+            <span>live schematic</span>
+          </div>
+          <div class="telemetry">
+            <div>
+              <span class="metric-value">01</span>
+              <span class="metric-label">Logged-in page</span>
+            </div>
+            <div>
+              <span class="metric-value">MAX</span>
+              <span class="metric-label">Objective rating</span>
+            </div>
+            <div>
+              <span class="metric-value">CN</span>
+              <span class="metric-label">Subjective answers</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="io" class="io-section" aria-labelledby="io-title">
+        <div class="section-heading">
+          <p class="eyebrow">Input / Output Contract</p>
+          <h2 id="io-title">从评教页面到完成状态</h2>
+        </div>
+
+        <div class="io-grid">
+          <article class="io-node">
+            <span class="node-kicker">INPUT</span>
+            <h3>已登录的评教页面</h3>
+            <p>课程评价或教师评价入口、待评价列表、表单控件和主观题提示。</p>
+          </article>
+
+          <article class="io-node io-node-accent">
+            <span class="node-kicker">AGENT PIPELINE</span>
+            <h3>浏览器优先的自动执行链</h3>
+            <p>读取页面结构，定位待处理行，填选最高评价，写入中文回答，保存并复核状态。</p>
+          </article>
+
+          <article class="io-node">
+            <span class="node-kicker">OUTPUT</span>
+            <h3>完成的课程与教师评价</h3>
+            <p>已提交或已保存的评价项、跳过的已完成项，以及可核对的处理摘要。</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="pipeline" class="pipeline-section" aria-labelledby="pipeline-title">
+        <div class="section-heading">
+          <p class="eyebrow">Execution Model</p>
+          <h2 id="pipeline-title">三层控制策略</h2>
+        </div>
+
+        <ol class="pipeline-list">
+          <li>
+            <span class="step-index">01</span>
+            <div>
+              <h3>Browser Control First</h3>
+              <p>优先通过可控浏览器读取 DOM、设置表单、点击保存，并用页面状态验证结果。</p>
+            </div>
+          </li>
+          <li>
+            <span class="step-index">02</span>
+            <div>
+              <h3>Desktop Automation Fallback</h3>
+              <p>当浏览器控制不可用但页面可见时，使用桌面自动化完成同一套流程。</p>
+            </div>
+          </li>
+          <li>
+            <span class="step-index">03</span>
+            <div>
+              <h3>Completion Check</h3>
+              <p>每次保存后回到列表或读取反馈，确认待评价项已经转为完成状态。</p>
+            </div>
+          </li>
+        </ol>
+      </section>
+
+      <section id="usage" class="usage-section" aria-labelledby="usage-title">
+        <div class="usage-copy">
+          <p class="eyebrow">Prompt</p>
+          <h2 id="usage-title">使用方式</h2>
+          <p>先在浏览器中登录国科大选课系统，并打开课程评价或教师评价页面，然后在 Codex 中调用 skill。</p>
+        </div>
+        <pre><code>使用 $ucas-course-evaluation，全自动完成国科大课程评价和教师评价，都给最高评价，主观题用中文。</code></pre>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
